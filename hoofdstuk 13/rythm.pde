@@ -14,12 +14,15 @@ import java.util.ArrayList;
 Movie turboVideo;
 
 
+
+
 // NOTES
 
 ArrayList<ChartNote> notes = new ArrayList<ChartNote>();
 
 
 // GAME SETTINGS
+
 
 // Hit line position
 float hitY = 80;
