@@ -34,7 +34,7 @@ void setup() {
 
   loadChart();
 }
-
+//chart loader
 
 
 void loadChart() {
@@ -116,8 +116,12 @@ void draw() {
 
 for (Note note : notes) {
     note.move();
+    
+    
   }
 }
+
+//the keybinds
 
 void keyPressed() {
   int pressedLane = -1;
@@ -147,6 +151,9 @@ void keyPressed() {
   }
 }
 
+
+//the class of the note
+
 class Note {
   int lane;
 
@@ -167,6 +174,10 @@ class Note {
     // Time from the JSON
     hitTime = noteTime;
   }
+
+
+//hit ding ben slecht met uitleggen laat me
+
 
   boolean tryHit(int pressedLane) {
 
@@ -200,6 +211,11 @@ class Note {
     if (hit || missed) {
       return;
     }
+    
+    
+//timing met de video en de notes
+
+
 
     // Current song time
    // float currentTime = millis() - songStartTime;
@@ -230,11 +246,16 @@ class Note {
       return;
     }
 
+
+//offsets
+
     ellipse(x, y, noteSize, noteSize);
     
     ellipse(x, y, noteSize, noteSize);
   }
   }
+  
+  //om het video te laden
 
 void movieEvent(Movie m) {
   m.read();
