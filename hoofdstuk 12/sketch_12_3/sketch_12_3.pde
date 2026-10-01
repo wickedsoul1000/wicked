@@ -31,6 +31,7 @@ class bankAccount {
       
     } else {
       saldo = saldo + bedrag;
+      println("geld gedeposit");
     }
   }
   
