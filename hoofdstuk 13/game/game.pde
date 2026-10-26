@@ -1,5 +1,3 @@
-//video shit
-
 import processing.video.*;
 
 Movie turboVideo;
@@ -7,34 +5,36 @@ Movie turboVideo;
 //zodat alle notes in het program zitten
 
 ArrayList <Note> notes = new ArrayList<Note>();
-
-//scores for the notes die je hit of missed
-
+//
 
 int score = 0;
-int songStartTime;
+
+int hitCounter;
 
 float chartOffset = 1000;
 
 float hitY = 80;
 float timingWindow = 35;
 
+//
+
+int startText = 5000;
+//
+
 void setup() {
   size(500, 500);
-
-
-//video
 
   println(dataPath("turboVideo.mp4"));
 
   turboVideo = new Movie(this, "turboVideo.mp4");
   turboVideo.play();
-  
+
   //json ding
 
   loadChart();
+
+  //
 }
-//chart loader
 
 
 void loadChart() {
@@ -65,10 +65,9 @@ void loadChart() {
 
       float time = note.getFloat(0);
       int lane = note.getInt(1);
-      float sustain = note.getFloat(2);
 
       // Player notes
-      if (mustHitSection && lane < 4) {
+      if (mustHitSection && lane < 10) {
 
         float x;
 
@@ -84,15 +83,6 @@ void loadChart() {
 
         // ADD THE NOTE TO THE ARRAYLIST
         notes.add(new Note(x, height + 30, time, lane));
-
-        println(
-          "Added note: " +
-          time +
-          "ms lane " +
-          lane +
-          " sustain " +
-          sustain
-        );
       }
     }
   }
@@ -100,10 +90,13 @@ void loadChart() {
   println("TOTAL NOTES: " + notes.size());
 }
 
+
+
 void draw() {
   background(0);
 
   image(turboVideo, 0, 0, width, height);
+
 
   fill(0, 0, 255);
   textSize(20);
@@ -114,30 +107,22 @@ void draw() {
   line(380, height, 380, 0);
   line(0, hitY, width, hitY);
 
-for (Note note : notes) {
+  for (Note note : notes) {
     note.move();
-    
-    
   }
 }
-
-//the keybinds
 
 void keyPressed() {
   int pressedLane = -1;
 
   if (key == 'a' || key == 'A' || (key == CODED && keyCode == LEFT)) {
     pressedLane = 0;
-    println("LEFT");
   } else if (key == 's' || key == 'S' || (key == CODED && keyCode == DOWN)) {
     pressedLane = 1;
-    println("DOWN");
   } else if (key == 'w' || key == 'W' || (key == CODED && keyCode == UP)) {
     pressedLane = 2;
-    println("UP");
   } else if (key == 'd' || key == 'D' || (key == CODED && keyCode == RIGHT)) {
     pressedLane = 3;
-    println("RIGHT");
   }
 
   if (pressedLane == -2) {
@@ -146,6 +131,7 @@ void keyPressed() {
 
   for (int i = 0; i < notes.size(); i++) {
     if (notes.get (i) .tryHit(pressedLane)) {
+
       break;
     }
   }
@@ -160,7 +146,6 @@ class Note {
   float x, y;
   float noteSize = 60;
 
-  // When the note should be hit
   float hitTime;
 
   boolean hit = false;
@@ -174,9 +159,6 @@ class Note {
     // Time from the JSON
     hitTime = noteTime;
   }
-
-
-//hit ding ben slecht met uitleggen laat me
 
 
   boolean tryHit(int pressedLane) {
@@ -194,11 +176,15 @@ class Note {
     if (difference <= timingWindow) {
 
       score += 100;
+      hitCounter ++;
       hit = true;
 
-      println("HIT!");
-      println("Note time: " + hitTime + " ms");
-      println("Difference: " + difference + " ms");
+      if (hit != missed) {
+        println("SICK");
+      }
+      if (hitCounter > 10 ) {
+        println("PERFECT");
+      }
 
       return true;
     }
@@ -211,16 +197,16 @@ class Note {
     if (hit || missed) {
       return;
     }
-    
-    
-//timing met de video en de notes
+
+
+    //timing met de video en de notes
 
 
 
     // Current song time
-   // float currentTime = millis() - songStartTime;
-       float currentTime = turboVideo.time() *1000.0;
-       
+    // float currentTime = millis() - songStartTime;
+    float currentTime = turboVideo.time() *1000.0;
+
 
     // How long until the note should be hit
     float timeUntilHit = hitTime - currentTime;
@@ -234,28 +220,25 @@ class Note {
     // Missed the note
     if (currentTime > hitTime + timingWindow) {
 
-      score -= 10;
+      score -= 150;
       missed = true;
-
-      println("MISS!");
-      println("Note time: " + hitTime + " ms");
     }
+if(missed == true){
+  println("missed");
+ hitCounter = 0;
  
+    }
+
     // Don't show notes that are too far below
     if (y > height + noteSize) {
       return;
     }
 
-
-//offsets
+    ellipse(x, y, noteSize, noteSize);
 
     ellipse(x, y, noteSize, noteSize);
-    
-    ellipse(x, y, noteSize, noteSize);
   }
-  }
-  
-  //om het video te laden
+}
 
 void movieEvent(Movie m) {
   m.read();
